@@ -1,7 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python app to Azure Web App - faceemotionstreamlit
 
 on:
@@ -14,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -28,11 +24,9 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-      
+
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -49,8 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -61,18 +54,9 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F43B795BC86D438FA01D45E3B98CECD5 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E7267A1996FE4AAA90F81911E7EDF90D }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A5CB000075B04FF4AAD0C971ECFBC6A6 }}
-
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
-          app-name: 'faceemotionstreamlit'
-          slot-name: 'Production'
-          
+          app-name: 'faceemotionstreamlit'  # ⚠️ Asegúrate que este nombre sea EXACTO al de tu App Service
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FACEEMOTIONSTREAMLIT }}
+          package: .
