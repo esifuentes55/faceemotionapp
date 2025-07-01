@@ -3,3 +3,5 @@ streamlit-webrtc
 tensorflow
 opencv-python
 numpy
+pandas
+matplotlib
